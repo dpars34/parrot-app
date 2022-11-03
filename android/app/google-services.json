@@ -29,6 +29,13 @@
             {
               "client_id": "53256044707-0m8vm9krlio3s1ss9nbi8gflb6l2dgpu.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "53256044707-sm7k7sqsvkbslkso7ajj5fbaqbcbv2q8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.danpdev.parrotApp"
+              }
             }
           ]
         }
