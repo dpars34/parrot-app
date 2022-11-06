@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:parrot_app/components/search_item.dart';
+import 'package:parrot_app/screens/detail/detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.title}) : super(key: key);
@@ -43,12 +44,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void onResultClick(Map item) {
-    print(item);
-    Navigator.pushNamed(
-        context, '/detail',
-        arguments: {
-          'item': item
-        }
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailScreen(title: '詳細', item: item),
+      ),
     );
   }
 

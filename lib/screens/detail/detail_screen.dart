@@ -1,31 +1,32 @@
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:parrot_app/components/entry_item.dart';
 
 class DetailScreen extends StatefulWidget {
-  const DetailScreen({Key? key, required this.title}) : super(key: key);
+  const DetailScreen({Key? key, required this.title, required this.item}) : super(key: key);
 
   static const String route = '/detail';
   final String title;
+  final Map item;
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  Map data = {};
-  List details = [];
+  List entries = [];
 
   FirebaseFirestore db = FirebaseFirestore.instance;
 
   void fetchData() async {
-    await db.collection("entries").where("related_word", isEqualTo: data['item']['id']).get().then((event) {
-      print(event.docs);
-      // for (var doc in event.docs) {
-      //   setState(() {
-      //     items.add({"id": doc.id, "data": doc.data()});
-      //   });
-      // }
+    await db.collection("entries").where("related_word", isEqualTo: widget.item['id']).get().then((event) {
+      for (var doc in event.docs) {
+        setState(() {
+          entries.add({"id": doc.id, "data": doc.data()});
+        });
+      }
+      print(entries);
     });
   }
 
@@ -37,8 +38,6 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    data = ModalRoute.of(context)?.settings.arguments != null ? ModalRoute.of(context)?.settings.arguments as Map : {};
 
     return Scaffold(
       appBar: AppBar(
@@ -53,18 +52,21 @@ class _DetailScreenState extends State<DetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  data['item']['data']['word'],
-                  style: TextStyle(
+                  widget.item['data']['word'],
+                  style: const TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold
                   ),
                 ),
                 Text(
-                  data['item']['data']['english'][0],
+                  widget.item['data']['english'][0],
                 )
               ],
             ),
           ),
+          Column(
+            children: entries.map((entry) => EntryItem(item: entry)).toList()
+          )
         ],
       ),
     );
