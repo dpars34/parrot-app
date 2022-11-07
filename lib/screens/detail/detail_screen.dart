@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:parrot_app/components/entry_item.dart';
+import 'package:parrot_app/screens/upload/upload_record_screen.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({Key? key, required this.title, required this.item}) : super(key: key);
@@ -30,6 +31,15 @@ class _DetailScreenState extends State<DetailScreen> {
     });
   }
 
+  void toUploadScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const UploadRecordScreen(),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +52,18 @@ class _DetailScreenState extends State<DetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Parrot App'),
+        actions: [
+          TextButton(
+            onPressed: toUploadScreen,
+            child: const Text(
+              "アプロード",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
