@@ -1,6 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
+import 'package:flutter_sound/flutter_sound.dart' hide PlayerState;
 import 'package:permission_handler/permission_handler.dart';
 
 class UploadRecordScreen extends StatefulWidget {
@@ -23,6 +23,27 @@ class _UploadRecordScreenState extends State<UploadRecordScreen> {
   void initState() {
     super.initState();
     initRecorder();
+
+    // listen to state
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        isPlaying = state == PlayerState.playing;
+      });
+    });
+
+    // listen to audio duration
+    audioPlayer.onDurationChanged.listen((newDuration) {
+      setState(() {
+        duration = newDuration;
+      });
+    });
+
+    // listen to audio position
+    audioPlayer.onPositionChanged.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
+    });
   }
 
   @override
@@ -52,6 +73,13 @@ class _UploadRecordScreenState extends State<UploadRecordScreen> {
     final path = await recorder.stopRecorder();
 
     print('Recorded Audio: $path');
+  }
+
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$twoDigitMinutes:$twoDigitSeconds";
   }
 
   @override
@@ -98,6 +126,28 @@ class _UploadRecordScreenState extends State<UploadRecordScreen> {
                 max: duration.inSeconds.toDouble(),
                 value: position.inSeconds.toDouble(),
                 onChanged: (value) async {},
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(_printDuration(position)),
+                  Text(_printDuration(duration)),
+                ]
+              ),
+              CircleAvatar(
+                radius: 35,
+                child: IconButton(
+                  icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+                  iconSize: 50,
+                  onPressed: () async {
+                    if (isPlaying) {
+                      await audioPlayer.pause();
+                    } else {
+                      String url = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+                      await audioPlayer.play(UrlSource(url));
+                    }
+                  }
+                )
               )
             ],
           )
